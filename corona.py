@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import pandas as pd
 import requests
 import numpy as np
@@ -22,11 +22,7 @@ def fit_expo(x,y):
                            p0=initParams)
     return params[0],params[1],initParams
 
-
-#now         = datetime.now() 
-#date        = now.strftime("%Y-%m-%d") 
-
-date        = '2020-06-27'  #hard coded
+date        = (datetime.today() - timedelta(days=1)).strftime('%Y-%m-%d')
 
 url         = "https://www.ecdc.europa.eu/sites/default/files/documents/COVID-19-geographic-disbtribution-worldwide-"
 url         = url +date+".xlsx"
@@ -34,7 +30,7 @@ url         = url +date+".xlsx"
 df          = pd.read_excel(url)
 #df.head() #show table
 
-country     = 'Italy' #e.g. South Korea,China, United_States_of_America,United_Kingdom, Italy, Austria
+country     = 'Austria' #e.g. South Korea,China, United_States_of_America,United_Kingdom, Italy, Austria
 df_filtered = df[df['countriesAndTerritories'] == country]  
 #df_filtered['Cases'].describe()  # describtive statistics
 
