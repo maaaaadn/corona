@@ -26,7 +26,7 @@ def fit_expo(x,y):
 #now         = datetime.now() 
 #date        = now.strftime("%Y-%m-%d") 
 
-date        = '2020-03-21'  #hard coded
+date        = '2020-06-27'  #hard coded
 
 url         = "https://www.ecdc.europa.eu/sites/default/files/documents/COVID-19-geographic-disbtribution-worldwide-"
 url         = url +date+".xlsx"
@@ -35,28 +35,35 @@ df          = pd.read_excel(url)
 #df.head() #show table
 
 country     = 'Italy' #e.g. South Korea,China, United_States_of_America,United_Kingdom, Italy, Austria
-df_filtered = df[df['Countries and territories'] == country]  
-
+df_filtered = df[df['countriesAndTerritories'] == country]  
 #df_filtered['Cases'].describe()  # describtive statistics
 
-timeSpan    = 31  # last month
-dates       = np.array(df_filtered['DateRep'][0:timeSpan],dtype='datetime64[D]')
+timeSpan    = 25  # last month
+dates       = np.array(df_filtered['dateRep'][0:timeSpan],dtype='datetime64[D]')
 dates       = dates[::-1]
-newCases    = np.array(df_filtered['Cases'])[0:timeSpan] 
+newCases    = np.array(df_filtered['cases'])[0:timeSpan] 
 newCases    = newCases[::-1]  #reverse order 
+newDeaths   = np.array(df_filtered['deaths'])[0:timeSpan]
+newDeaths   = newDeaths[::-1]
 allCases    = np.cumsum(newCases)
+allDeaths   = np.cumsum(newDeaths)
 xTicks      = np.arange(np.size(newCases))
 
 ######## fit over whole time span   ##########
 plt.figure(1)
 params,_, _ = fit_expo(xTicks,allCases)
 plt.plot(xTicks, params[0]*np.exp(params[1]*xTicks),'r--', linewidth = 4, label = 'whole time span')
+#plt.show()
+
+#plt.figure(2)
+#plt.plot(xTicks, allDeaths,'r--', linewidth = 4, label = 'whole time span')
+#plt.show()
 
 ######## sliding fit ###########
 fittedDays   = 7
 n            = timeSpan-fittedDays+1  #samples for sliding fit
 
-colorMap     = cm.rainbow(np.linspace(1,0,n)) #e.g. rainbow, magma
+colorMap     = cm.magma(np.linspace(1,0,n)) #e.g. rainbow, magma
 color        = iter(colorMap)   
 doublingVec  = np.zeros((n,))
 
